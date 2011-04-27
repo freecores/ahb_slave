@@ -1,0 +1,27 @@
+
+VERIFY ((DATA_BITS == 64) || (DATA_BITS == 32))  else stub supports 32 or 64 bits data bus
+VERIFY (ADDR_BITS<=24) else Memory size should not be too big to prevent maloc fail
+      
+GROUP STUB_AHB is {
+  HADDR   ADDR_BITS   output
+  HBURST  3           output
+  HSIZE   2           output
+  HTRANS  2           output
+  HWRITE  1           output
+  HWDATA  DATA_BITS   output
+  HRDATA  DATA_BITS   input
+  HREADY  1           input
+  HRESP   1           input
+}
+
+
+GROUP STUB_MEM is {
+    WR        1            output
+    RD        1            output
+    ADDR_WR   ADDR_BITS    output
+    ADDR_RD   ADDR_BITS    output
+    DIN       DATA_BITS    output
+    BSEL      DATA_BITS/8  output
+    DOUT      DATA_BITS    input
+}
+  

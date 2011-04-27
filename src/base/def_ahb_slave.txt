@@ -1,0 +1,12 @@
+
+INCLUDE def_ahb_slave_static.txt
+
+SWAP.GLOBAL #FFD #1                 ##Flip-Flop simulation delay
+
+SWAP PREFIX      ahb_slave          ##prefix for all module and file names
+  
+SWAP ADDR_BITS   24                 ##AHB address bits
+SWAP DATA_BITS   32                 ##AHB data bits
+  
+##DEFINE TRACE                      ##print memory trace to file
+  
