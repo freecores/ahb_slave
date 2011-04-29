@@ -18,6 +18,7 @@ module PREFIX_ram(PORTS);
    port                       GROUP_STUB_MEM;
 
    
+CREATE prgen_rand.v DEFCMD(DEFINE NOT_IN_LIST)
 `include "prgen_rand.v"
 
    
