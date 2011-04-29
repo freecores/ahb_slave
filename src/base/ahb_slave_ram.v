@@ -41,8 +41,9 @@ module PREFIX_ram(PORTS);
    
    reg [1:0] 		      HSIZE_d;
    wire 		      WR_pre;
+   reg                        WR_pre_d;
+   wire                       WR;
    wire [ADDR_BITS-1:0]       ADDR_WR_pre;
-   reg 			      WR;
    reg [ADDR_BITS-1:0] 	      ADDR_WR;
    reg 			      data_phase;
    
@@ -133,6 +134,7 @@ module PREFIX_ram(PORTS);
 
    
    assign 		      WR_pre      = HWRITE & ((HTRANS == TRANS_NONSEQ) | (HTRANS == TRANS_SEQ));
+   assign                     WR          = WR_pre_d & HREADY;
    assign 		      RD          = (~HWRITE) & ((HTRANS == TRANS_NONSEQ) | (HTRANS == TRANS_SEQ)) & HREADY;
    assign 		      ADDR_WR_pre = {ADDR_BITS{WR_pre}} & HADDR;
    assign 		      ADDR_RD     = {ADDR_BITS{RD}} & HADDR;
@@ -168,13 +170,13 @@ module PREFIX_ram(PORTS);
    always @(posedge clk or posedge reset)
      if (reset)
        begin
-	  WR <= #FFD 1'b0;
+	  WR_pre_d <= #FFD 1'b0;
 	  ADDR_WR <= #FFD {ADDR_BITS{1'b0}};
 	  HSIZE_d <= #FFD 2'b0;
        end
      else if (HREADY)
        begin
-	  WR <= #FFD WR_pre;
+	  WR_pre_d <= #FFD WR_pre;
 	  ADDR_WR <= #FFD ADDR_WR_pre;
 	  HSIZE_d <= #FFD HSIZE;
        end

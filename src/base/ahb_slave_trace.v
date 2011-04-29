@@ -4,11 +4,8 @@ OUTFILE PREFIX_trace.v
 INCLUDE def_ahb_slave.txt
   
 module PREFIX_trace(PORTS);
-      
    parameter                  SLAVE_NUM = 0;
-   
-   parameter 		      FILE_NAME     = "PREFIX.trc";
-   
+      
    input 		      clk;
    input 		      reset;
 
@@ -20,12 +17,18 @@ module PREFIX_trace(PORTS);
 
    wire [31:0] 		      ADDR_WR_disp =  ADDR_WR;	
    wire [31:0] 		      ADDR_RD_disp =  ADDR_RD_d;
-   
+
+   reg [64*8-1:0]             filename;
    integer                    file_ptr;
    
+   
    initial
-     file_ptr = $fopen(FILE_NAME, "w");
-
+     begin
+        //erase trace
+        file_ptr = $fopen({"PREFIX.trc"}, "w");
+        $fwrite(file_ptr, "\n");
+        $fclose(file_ptr);
+     end
    
    always @(posedge clk or posedge reset)
      if (reset)
@@ -41,12 +44,19 @@ module PREFIX_trace(PORTS);
    
    always @(posedge clk)
      if (WR)
-       $fwrite(file_ptr, "%16d: %0s WR: Addr: 0x%8h, Data: 0x%8h, Bsel: 0x%2h\n", $time, FILE_NAME, ADDR_WR_disp, DIN, BSEL);
-	
+       begin
+          file_ptr = $fopen({"PREFIX.trc"}, "a");
+          $fwrite(file_ptr, "%16d: PREFIX%0d WR: Addr: 0x%EXPR(ADDR_BITS/4)h, Data: 0x%EXPR(DATA_BITS/4)h, Bsel: 0x%EXPR(DATA_BITS/32)h\n", $time, SLAVE_NUM, ADDR_WR_disp, DIN, BSEL);
+          $fclose(file_ptr);
+       end
+   
    always @(posedge clk)
      if (RD_d)
-       $fwrite(file_ptr, "%16d: %0s RD: Addr: 0x%8h, Data: 0x%8h\n", $time, FILE_NAME, ADDR_RD_disp, DOUT);
-
+       begin
+          file_ptr = $fopen({"PREFIX.trc"}, "a");
+          $fwrite(file_ptr, "%16d: PREFIX%0d RD: Addr: 0x%EXPR(ADDR_BITS/4)h, Data: 0x%EXPR(DATA_BITS/4)h\n", $time, SLAVE_NUM, ADDR_RD_disp, DOUT);
+          $fclose(file_ptr);
+       end
       
 endmodule
 
