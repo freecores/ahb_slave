@@ -29,8 +29,8 @@
 
 SWAP.GLOBAL MODEL_NAME AHB slave stub
 
-VERIFY ((DATA_BITS == 64) || (DATA_BITS == 32))  ##stub supports 32 or 64 bits data bus
-VERIFY (ADDR_BITS<=24) ##Memory size should not be too big to prevent maloc fail
+VERIFY (DATA_BITS in 32, 64)  ##stub supports 32 or 64 bits data bus
+VERIFY (ADDR_BITS in 16..24) ##Memory size should not be too big to prevent maloc fail
       
 GROUP STUB_AHB is {
   HADDR   ADDR_BITS   output
